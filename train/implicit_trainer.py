@@ -10,6 +10,11 @@ from utils.debugger import MyDebugger
 import os
 import argparse
 
+USEWANDB = False
+
+if USEWANDB:
+    import wandb
+
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 # torch.backends.cudnn.benchmark = True
 
@@ -81,6 +86,7 @@ class Trainer(object):
                 print(f"Reloaded the optimizer from {self.config.optimizer_resume_path}")
                 self.config.optimizer_resume_path = None
 
+            import ipdb; ipdb.set_trace()
             for idx in range(self.config.starting_epoch, self.config.training_epochs + 1):
                 with tqdm(train_data_loader, unit='batch') as tepoch:
                     tepoch.set_description(f'Epoch {idx}')
@@ -150,10 +156,14 @@ class Trainer(object):
                 loss.backward()
                 optimizer.step()
 
+            if USEWANDB:
+                wandb.log({"loss": loss})
             tepoch.set_postfix(loss=f'{np.mean(losses)}')
 
         return losses
 
+    def disentanglement_loss(self, loss, losses, network, occupancy_ground_truth, prediction, convex_layer_weights):
+        pass
 
     def flow_bsp_loss(self, loss, losses, network, occupancy_ground_truth, prediction, convex_layer_weights):
 
@@ -239,6 +249,8 @@ if __name__ == '__main__':
         if args.__dict__.get(optional_arg, None) is not None:
             locals()['config'].__setattr__(optional_arg, args.__dict__.get(optional_arg, None))
 
+    if USEWANDB:
+        wandb.init(project="vr-clay", entity="ianhuang")
 
     model_type = f"AutoEncoder-{config.encoder_type}-{config.decoder_type}" if config.network_type == 'AutoEncoder' else f"AutoDecoder-{config.decoder_type}"
     debugger = MyDebugger(f'IM-Net-Training-experiment-{os.path.basename(config.data_folder)}-{model_type}{config.special_symbol}', is_save_print_to_file = True, config_path = resume_path)
