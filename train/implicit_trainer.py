@@ -47,7 +47,7 @@ class Trainer(object):
                                      num_workers=config.data_worker,
                                      shuffle=True,
                                      drop_last=False)
-
+            import ipdb; ipdb.set_trace()
             if hasattr(self.config, 'use_testing') and self.config.use_testing:
                 test_samples = ImNetSamples(data_path=self.config.data_path[:-10] + 'test.hdf5',
                                             sample_voxel_size=sample_voxel_size,
@@ -86,7 +86,6 @@ class Trainer(object):
                 print(f"Reloaded the optimizer from {self.config.optimizer_resume_path}")
                 self.config.optimizer_resume_path = None
 
-            import ipdb; ipdb.set_trace()
             for idx in range(self.config.starting_epoch, self.config.training_epochs + 1):
                 with tqdm(train_data_loader, unit='batch') as tepoch:
                     tepoch.set_description(f'Epoch {idx}')
@@ -163,6 +162,9 @@ class Trainer(object):
         return losses
 
     def disentanglement_loss(self, loss, losses, network, occupancy_ground_truth, prediction, convex_layer_weights):
+        import ipdb; ipdb.set_trace()
+        # TODO: we need to get the trajectory
+
         pass
 
     def flow_bsp_loss(self, loss, losses, network, occupancy_ground_truth, prediction, convex_layer_weights):

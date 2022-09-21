@@ -63,6 +63,8 @@ class FlowDecoder(torch.nn.Module):
             embedding_1 = embedding
             embedding_2 = embedding
 
+        import ipdb; ipdb.set_trace()
+
         final_state = self.forward_flow(embedding_1, coordinates, adjoint=adjoint)
 
         final_state = self.extract_output(coordinates, embedding_2, final_state)
