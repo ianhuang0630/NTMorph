@@ -47,7 +47,7 @@ class Trainer(object):
                                      num_workers=config.data_worker,
                                      shuffle=True,
                                      drop_last=False)
-            import ipdb; ipdb.set_trace()
+
             if hasattr(self.config, 'use_testing') and self.config.use_testing:
                 test_samples = ImNetSamples(data_path=self.config.data_path[:-10] + 'test.hdf5',
                                             sample_voxel_size=sample_voxel_size,
@@ -162,7 +162,6 @@ class Trainer(object):
         return losses
 
     def disentanglement_loss(self, loss, losses, network, occupancy_ground_truth, prediction, convex_layer_weights):
-        import ipdb; ipdb.set_trace()
         # TODO: we need to get the trajectory
 
         pass
@@ -255,6 +254,7 @@ if __name__ == '__main__':
         wandb.init(project="vr-clay", entity="ianhuang")
 
     model_type = f"AutoEncoder-{config.encoder_type}-{config.decoder_type}" if config.network_type == 'AutoEncoder' else f"AutoDecoder-{config.decoder_type}"
-    debugger = MyDebugger(f'IM-Net-Training-experiment-{os.path.basename(config.data_folder)}-{model_type}{config.special_symbol}', is_save_print_to_file = True, config_path = resume_path)
+    debugger = MyDebugger(f'IM-Net-Training-experiment-{os.path.basename(config.data_folder)}-{model_type}{config.special_symbol}', is_save_print_to_file = False, config_path = resume_path)
+    import ipdb; ipdb.set_trace()
     trainer = Trainer(config = config, debugger = debugger)
     trainer.train_network()
